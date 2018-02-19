@@ -7,10 +7,15 @@
 ATrinitCharacter::ATrinitCharacter()
 {
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> mesha(TEXT("SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> mesha(TEXT("SkeletalMesh'/Game/MyContent/UE4_Mannequin/Mesh/SK_Mannequin.SK_Mannequin'"));
 	GetMesh()->SetSkeletalMesh(mesha.Object);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90.0f));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
+
+	static ConstructorHelpers::FObjectFinder<UAnimBlueprint> animBP(TEXT("AnimBlueprint'/Game/MyContent/UE4_Mannequin/Animations/CharAnimBP_1.CharAnimBP_1'"));
+
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetMesh()->SetAnimInstanceClass(animBP.Object->GeneratedClass);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -20,6 +25,8 @@ ATrinitCharacter::ATrinitCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));	
 	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+
+	//GetMesh()->GetAnimInstance();
 	
 
 	// Desligar la rotación del controlador de la rotación del modelo
@@ -30,11 +37,6 @@ ATrinitCharacter::ATrinitCharacter()
 	// Al mover el personaje, este rota hacia donde mira la cámara
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
-
-	/*Mesh2 = CreateDefaultSubobject<UStaticMeshComponent>("Mesh2");
-	Mesh2->SetupAttachment(RootComponent);
-
-	Mesh2->OnComponentBeginOverlap.AddDynamic(this, &ATrinitCharacter::OnOverlap);*/
 
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -58,6 +60,7 @@ void ATrinitCharacter::MoveForward(float Delta)
 {
 	if (Delta != 0.0f)
 	{
+		// Construye una matriz de rotación hacia donde mira el controlador
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -76,11 +79,14 @@ void ATrinitCharacter::MoveRight(float Delta)
 	}
 }
 
+// Movimiento de la camara arriba/abajo -> pitch
 void ATrinitCharacter::LookUp(float value)
 {
 	AddControllerPitchInput(value * 45.f * GetWorld()->GetDeltaSeconds());
 }
 
+
+// Movimiento la cámara a los lados -> yaw
 void ATrinitCharacter::Turn(float value)
 {
 	AddControllerYawInput(value * 45.f * GetWorld()->GetDeltaSeconds());
