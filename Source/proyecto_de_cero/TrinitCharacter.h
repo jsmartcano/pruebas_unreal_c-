@@ -23,7 +23,7 @@ class PROYECTO_DE_CERO_API ATrinitCharacter : public ACharacter
 	UPROPERTY(EditDefaultsOnly, Category = "Trinit")
 	USkeletalMeshComponent* Weapon;
 
-	bool IsWeaponEquip;  // Si tiene el arma cargada
+	bool IsWeaponEquip;  // Si tiene el arma equipada
 	bool IsWeaponPressed; // Si la animación de equipar/desequipar está en curso
 	
 	
