@@ -2,9 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Classes/GameFramework/SpringArmComponent.h"
+#include "Classes/Camera/CameraComponent.h"
+
 #include "GameFramework/Character.h"
 #include "TrinitCharacter.generated.h"
+
 
 UCLASS()
 class PROYECTO_DE_CERO_API ATrinitCharacter : public ACharacter
@@ -12,27 +15,23 @@ class PROYECTO_DE_CERO_API ATrinitCharacter : public ACharacter
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, Category = "Trinit")
-	class USpringArmComponent* CameraBoom;
+	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Trinit")
-	class UCameraComponent* Camera;
-	/*UPROPERTY(VisibleAnywhere, Category = "Trinit")
-	UStaticMeshComponent* Mesh2;
-*/
+	UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trinit")
+	USkeletalMeshComponent* Weapon;
+
+	bool IsWeaponEquip;  // Si tiene el arma cargada
+	bool IsWeaponPressed; // Si la animación de equipar/desequipar está en curso
+	
+	
 public:
 	// Sets default values for this character's properties
 	ATrinitCharacter();
 
-	UFUNCTION()
-		void OnOverlap(class UPrimitiveComponent *OverlappedComponent,
-			AActor* OtherActor,
-			class   UPrimitiveComponent *OtherComp,
-			int32	OtherBodyIndex,
-			bool	bFromSweep,
-			const	FHitResult &SweepResult);
-
-
-
+	bool GetIsWeaponEquip() { return IsWeaponEquip; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,6 +40,8 @@ protected:
 	void MoveRight(float Delta);
 	void LookUp(float value);
 	void Turn(float value);
+	void EquipWeapon();
+	void UnequipWeapon();
 
 public:
 	// Called every frame

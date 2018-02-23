@@ -25,6 +25,9 @@ public:
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Trinit")
 	bool IsInAir;
 
+	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Trinit")
+	bool IsWeaponEquip;
+
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaTimeX) override;
 
